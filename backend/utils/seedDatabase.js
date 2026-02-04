@@ -51,7 +51,7 @@ const sampleProducts = [
             { stt: 6, indicator: 'Kim loại nặng (Pb, Cd, As)', method: 'ICP-MS', cost: 1500000, category: 'KIM LOẠI NẶNG' }
         ],
         packagingRequirements: {
-            type: 'Túi màng nhôm composite, van một chiều bảo quản hương vị',
+            packageType: 'Túi màng nhôm composite, van một chiều bảo quản hương vị',
             standard: 'QCVN 12-1:2011/BYT (Bao bì nhựa tiếp xúc trực tiếp)',
             features: 'Ngăn oxy, độ ẩm, tia UV, giữ hương thơm cà phê lâu dài'
         },
@@ -90,7 +90,7 @@ const sampleProducts = [
             { stt: 3, indicator: 'Vi sinh ATTP', method: 'TCVN ISO', cost: 1200000, category: 'VI SINH' }
         ],
         packagingRequirements: {
-            type: 'Chai thủy tinh trung tính hoặc nhựa PET thực phẩm',
+            packageType: 'Chai thủy tinh trung tính hoặc nhựa PET thực phẩm',
             standard: 'QCVN 12-1:2011/BYT & QCVN 12-4:2015/BYT',
             features: 'Chịu mặn, ngăn ánh sáng làm biến màu nước mắm'
         }

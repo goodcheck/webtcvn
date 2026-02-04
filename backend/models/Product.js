@@ -60,9 +60,9 @@ const productSchema = new mongoose.Schema({
     }],
     // Yêu cầu bao bì
     packagingRequirements: {
-        type: String,
-        standard: String,
-        features: String
+        packageType: { type: String, default: '' },
+        standard: { type: String, default: '' },
+        features: { type: String, default: '' }
     },
     // Yêu cầu ghi nhãn
     labelingRequirements: [{

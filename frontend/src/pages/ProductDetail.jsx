@@ -257,7 +257,7 @@ const ProductDetail = () => {
                                 <tbody>
                                     <tr>
                                         <th>Loại bao bì</th>
-                                        <td>{product.packagingRequirements?.type}</td>
+                                        <td>{product.packagingRequirements?.packageType}</td>
                                     </tr>
                                     <tr>
                                         <th>Tiêu chuẩn</th>
