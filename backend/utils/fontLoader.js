@@ -2,11 +2,12 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const FONT_URL = 'https://raw.githubusercontent.com/google/fonts/main/apache/roboto/Roboto-Regular.ttf';
+const FONT_URL = 'https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf';
 const FONTS_DIR = path.join(__dirname, '..', 'fonts');
 const FONT_PATH = path.join(FONTS_DIR, 'Roboto-Regular.ttf');
 
 function downloadFile(url, dest) {
+    console.log('Attempting to download from:', url);
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(dest);
 
