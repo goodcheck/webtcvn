@@ -47,9 +47,10 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true, message: response.data.message };
         } catch (error) {
+            console.error('Login error:', error);
             return {
                 success: false,
-                message: error.response?.data?.message || 'Đăng nhập thất bại'
+                message: error.response?.data?.message || error.message || 'Đăng nhập thất bại'
             };
         }
     };
@@ -65,9 +66,10 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true, message: response.data.message };
         } catch (error) {
+            console.error('Register error:', error);
             return {
                 success: false,
-                message: error.response?.data?.message || 'Đăng ký thất bại'
+                message: error.response?.data?.message || error.message || 'Đăng ký thất bại'
             };
         }
     };
