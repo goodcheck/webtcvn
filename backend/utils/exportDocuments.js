@@ -4,6 +4,7 @@ const archiver = require('archiver');
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const path = require('path');
+const { downloadFont, FONT_PATH } = require('./fontLoader');
 
 // Ensure exports directory exists
 const EXPORTS_DIR = path.join(__dirname, '..', 'exports');
@@ -58,11 +59,15 @@ async function generateTCCS(product, format, user, modifiedData) {
     const timestamp = Date.now();
 
     if (format === 'pdf') {
+        await downloadFont();
         const filename = `TCCS_${p.name.replace(/\s+/g, '_')}_${timestamp}.pdf`;
         const filepath = path.join(EXPORTS_DIR, filename);
         const doc = new PDFDocument({ margin: 50 });
         const stream = fsSync.createWriteStream(filepath);
         doc.pipe(stream);
+
+        // Set Vietnamese font
+        doc.font(FONT_PATH);
 
         // Header
         doc.fontSize(14).text((user.company || '[Tên công ty]').toUpperCase(), { align: 'center' });
@@ -256,11 +261,14 @@ async function generateTestingForm(product, format, user, modifiedData) {
     const timestamp = Date.now();
 
     if (format === 'pdf') {
+        await downloadFont();
         const filename = `PhieuKN_${p.name.replace(/\s+/g, '_')}_${timestamp}.pdf`;
         const filepath = path.join(EXPORTS_DIR, filename);
         const doc = new PDFDocument({ margin: 50 });
         const stream = fsSync.createWriteStream(filepath);
         doc.pipe(stream);
+
+        doc.font(FONT_PATH);
 
         doc.fontSize(14).text('PHIẾU YÊU CẦU KIỂM NGHIỆM', { align: 'center', bold: true });
         doc.moveDown();
@@ -314,11 +322,14 @@ async function generateDeclaration(product, format, user, modifiedData) {
     const timestamp = Date.now();
 
     if (format === 'pdf') {
+        await downloadFont();
         const filename = `CongBo_${p.name.replace(/\s+/g, '_')}_${timestamp}.pdf`;
         const filepath = path.join(EXPORTS_DIR, filename);
         const doc = new PDFDocument({ margin: 50 });
         const stream = fsSync.createWriteStream(filepath);
         doc.pipe(stream);
+
+        doc.font(FONT_PATH);
 
         // National Header
         doc.fontSize(12).text('CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM', { align: 'center' });
@@ -464,11 +475,14 @@ async function generateLabel(product, format, user, modifiedData) {
     const timestamp = Date.now();
 
     if (format === 'pdf') {
+        await downloadFont();
         const filename = `Nhan_${p.name.replace(/\s+/g, '_')}_${timestamp}.pdf`;
         const filepath = path.join(EXPORTS_DIR, filename);
         const doc = new PDFDocument({ size: [400, 300], margin: 20 });
         const stream = fsSync.createWriteStream(filepath);
         doc.pipe(stream);
+
+        doc.font(FONT_PATH);
 
         doc.rect(10, 10, 380, 280).stroke();
         doc.fontSize(16).text(p.name.toUpperCase(), { align: 'center', bold: true });
