@@ -53,18 +53,20 @@ if (MONGODB_URI.includes('mongodb+srv://') && process.env.NODE_ENV === 'producti
   // Try to connect normally first
 }
 
+// Connect to MongoDB but don't block server startup
 mongoose.connect(MONGODB_URI, mongooseOptions)
   .then(() => {
     console.log('✅ MongoDB connected successfully');
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📡 API available at http://localhost:${PORT}/api`);
-    });
   })
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err);
-    // process.exit(1); // Don't exit on dev to allow fixing
   });
+
+// Start server immediately
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📡 API available at http://localhost:${PORT}/api`);
+});
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
