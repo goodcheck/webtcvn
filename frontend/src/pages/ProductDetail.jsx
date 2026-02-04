@@ -52,19 +52,19 @@ const ProductDetail = () => {
             let response;
             switch (type) {
                 case 'tccs':
-                    response = await exportAPI.tccs(id, format);
+                    response = await exportAPI.tccs(id, format, modifiedData);
                     break;
                 case 'testing':
-                    response = await exportAPI.testing(id, format);
+                    response = await exportAPI.testing(id, format, modifiedData);
                     break;
                 case 'declaration':
-                    response = await exportAPI.declaration(id, format);
+                    response = await exportAPI.declaration(id, format, modifiedData);
                     break;
                 case 'label':
-                    response = await exportAPI.label(id, format);
+                    response = await exportAPI.label(id, format, modifiedData);
                     break;
                 case 'all':
-                    response = await exportAPI.all(id);
+                    response = await exportAPI.all(id, modifiedData);
                     break;
                 default:
                     return;

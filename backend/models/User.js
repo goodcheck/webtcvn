@@ -26,6 +26,26 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    taxCode: {
+        type: String,
+        trim: true
+    },
+    address: {
+        type: String,
+        trim: true
+    },
+    phone: {
+        type: String,
+        trim: true
+    },
+    representativeRole: {
+        type: String,
+        trim: true,
+        default: 'Giám đốc'
+    },
+    logo: {
+        type: String // URL or base64
+    },
     role: {
         type: String,
         enum: ['user', 'admin'],

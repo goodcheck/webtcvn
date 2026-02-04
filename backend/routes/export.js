@@ -15,7 +15,7 @@ const {
 // @access  Private
 router.post('/tccs', protect, async (req, res, next) => {
     try {
-        const { productId, format = 'docx' } = req.body;
+        const { productId, format = 'docx', modifiedData } = req.body;
 
         const product = await Product.findById(productId);
         if (!product) {
@@ -25,7 +25,7 @@ router.post('/tccs', protect, async (req, res, next) => {
             });
         }
 
-        const file = await generateTCCS(product, format, req.user);
+        const file = await generateTCCS(product, format, req.user, modifiedData);
 
         res.json({
             success: true,
@@ -45,7 +45,7 @@ router.post('/tccs', protect, async (req, res, next) => {
 // @access  Private
 router.post('/testing', protect, async (req, res, next) => {
     try {
-        const { productId, format = 'xlsx' } = req.body;
+        const { productId, format = 'xlsx', modifiedData } = req.body;
 
         const product = await Product.findById(productId);
         if (!product) {
@@ -55,7 +55,7 @@ router.post('/testing', protect, async (req, res, next) => {
             });
         }
 
-        const file = await generateTestingForm(product, format);
+        const file = await generateTestingForm(product, format, req.user, modifiedData);
 
         res.json({
             success: true,
@@ -75,7 +75,7 @@ router.post('/testing', protect, async (req, res, next) => {
 // @access  Private
 router.post('/declaration', protect, async (req, res, next) => {
     try {
-        const { productId, format = 'docx' } = req.body;
+        const { productId, format = 'docx', modifiedData } = req.body;
 
         const product = await Product.findById(productId);
         if (!product) {
@@ -85,7 +85,7 @@ router.post('/declaration', protect, async (req, res, next) => {
             });
         }
 
-        const file = await generateDeclaration(product, format, req.user);
+        const file = await generateDeclaration(product, format, req.user, modifiedData);
 
         res.json({
             success: true,
@@ -105,7 +105,7 @@ router.post('/declaration', protect, async (req, res, next) => {
 // @access  Private
 router.post('/label', protect, async (req, res, next) => {
     try {
-        const { productId, format = 'pdf' } = req.body;
+        const { productId, format = 'pdf', modifiedData } = req.body;
 
         const product = await Product.findById(productId);
         if (!product) {
@@ -115,7 +115,7 @@ router.post('/label', protect, async (req, res, next) => {
             });
         }
 
-        const file = await generateLabel(product, format);
+        const file = await generateLabel(product, format, req.user, modifiedData);
 
         res.json({
             success: true,
@@ -135,7 +135,7 @@ router.post('/label', protect, async (req, res, next) => {
 // @access  Private
 router.post('/all', protect, async (req, res, next) => {
     try {
-        const { productId } = req.body;
+        const { productId, modifiedData } = req.body;
 
         const product = await Product.findById(productId);
         if (!product) {
@@ -145,7 +145,7 @@ router.post('/all', protect, async (req, res, next) => {
             });
         }
 
-        const file = await generateAllDocuments(product, req.user);
+        const file = await generateAllDocuments(product, req.user, modifiedData);
 
         res.json({
             success: true,

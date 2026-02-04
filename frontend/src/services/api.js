@@ -26,7 +26,8 @@ api.interceptors.request.use(
 export const authAPI = {
     register: (data) => api.post('/auth/register', data),
     login: (data) => api.post('/auth/login', data),
-    getMe: () => api.get('/auth/me')
+    getMe: () => api.get('/auth/me'),
+    updateProfile: (data) => api.put('/auth/profile', data)
 };
 
 // Products API
@@ -49,11 +50,11 @@ export const historyAPI = {
 
 // Export API
 export const exportAPI = {
-    tccs: (productId, format) => api.post('/export/tccs', { productId, format }),
-    testing: (productId, format) => api.post('/export/testing', { productId, format }),
-    declaration: (productId, format) => api.post('/export/declaration', { productId, format }),
-    label: (productId, format) => api.post('/export/label', { productId, format }),
-    all: (productId) => api.post('/export/all', { productId })
+    tccs: (productId, format, modifiedData) => api.post('/export/tccs', { productId, format, modifiedData }),
+    testing: (productId, format, modifiedData) => api.post('/export/testing', { productId, format, modifiedData }),
+    declaration: (productId, format, modifiedData) => api.post('/export/declaration', { productId, format, modifiedData }),
+    label: (productId, format, modifiedData) => api.post('/export/label', { productId, format, modifiedData }),
+    all: (productId, modifiedData) => api.post('/export/all', { productId, modifiedData })
 };
 
 export default api;

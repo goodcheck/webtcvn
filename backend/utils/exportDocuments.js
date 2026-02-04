@@ -14,15 +14,64 @@ async function ensureExportsDir() {
 }
 
 /**
+ * Apply modified data from UI to the product object
+ */
+function applyModifiedData(product, modifiedData = {}) {
+    if (!modifiedData || Object.keys(modifiedData).length === 0) return product;
+
+    const updatedProduct = JSON.parse(JSON.stringify(product));
+
+    Object.entries(modifiedData).forEach(([path, value]) => {
+        const parts = path.split('.');
+        if (parts[0] === 'sensory') {
+            updatedProduct.sensoryIndicators[parts[1]] = value;
+        } else if (parts[0] === 'physical') {
+            const index = parseInt(parts[1]);
+            if (updatedProduct.physicalChemical[index]) {
+                updatedProduct.physicalChemical[index].value = value;
+            }
+        } else if (parts[0] === 'micro') {
+            const index = parseInt(parts[1]);
+            if (updatedProduct.microbiological[index]) {
+                updatedProduct.microbiological[index].limit = value;
+            }
+        } else if (parts[0] === 'heavy') {
+            const index = parseInt(parts[1]);
+            if (updatedProduct.heavyMetals[index]) {
+                updatedProduct.heavyMetals[index].limit = value;
+            }
+        }
+    });
+
+    return updatedProduct;
+}
+
+/**
  * Generate TCCS (Tiêu chuẩn cơ sở) document
  */
-async function generateTCCS(product, format, user) {
+async function generateTCCS(product, format, user, modifiedData) {
     await ensureExportsDir();
+    const p = applyModifiedData(product, modifiedData);
 
     const doc = new Document({
         sections: [{
             properties: {},
             children: [
+                new Paragraph({
+                    text: (user.company || '[Tên công ty]').toUpperCase(),
+                    heading: 'Heading1',
+                    alignment: AlignmentType.CENTER
+                }),
+                new Paragraph({
+                    text: `Địa chỉ: ${user.address || '[Địa chỉ công ty]'}`,
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 200 }
+                }),
+                new Paragraph({
+                    text: '-------------------------------------------',
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 400 }
+                }),
                 new Paragraph({
                     text: 'TIÊU CHUẨN CƠ SỞ',
                     heading: 'Heading1',
@@ -30,7 +79,7 @@ async function generateTCCS(product, format, user) {
                     spacing: { after: 400 }
                 }),
                 new Paragraph({
-                    text: product.name.toUpperCase(),
+                    text: p.name.toUpperCase(),
                     heading: 'Heading2',
                     alignment: AlignmentType.CENTER,
                     spacing: { after: 600 }
@@ -41,7 +90,7 @@ async function generateTCCS(product, format, user) {
                     spacing: { before: 400, after: 200 }
                 }),
                 new Paragraph({
-                    text: `Tiêu chuẩn này áp dụng cho sản phẩm ${product.name} do ${user.company || '[Tên công ty]'} sản xuất.`,
+                    text: `Tiêu chuẩn này áp dụng cho sản phẩm ${p.name} do ${user.company || '[Tên công ty]'} sản xuất và kinh doanh.`,
                     spacing: { after: 200 }
                 }),
                 new Paragraph({
@@ -50,19 +99,19 @@ async function generateTCCS(product, format, user) {
                     spacing: { before: 400, after: 200 }
                 }),
                 new Paragraph({
-                    text: `Màu sắc: ${product.sensoryIndicators?.color || 'Đặc trưng của sản phẩm'}`,
+                    text: `Màu sắc: ${p.sensoryIndicators?.color}`,
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `Mùi: ${product.sensoryIndicators?.smell || 'Tự nhiên, không mùi lạ'}`,
+                    text: `Mùi: ${p.sensoryIndicators?.smell}`,
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `Vị: ${product.sensoryIndicators?.taste || 'Đặc trưng của sản phẩm'}`,
+                    text: `Vị: ${p.sensoryIndicators?.taste}`,
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `Trạng thái: ${product.sensoryIndicators?.texture || 'Đồng đều'}`,
+                    text: `Trạng thái: ${p.sensoryIndicators?.texture}`,
                     spacing: { after: 400 }
                 }),
                 new Paragraph({
@@ -70,19 +119,33 @@ async function generateTCCS(product, format, user) {
                     heading: 'Heading3',
                     spacing: { before: 400, after: 200 }
                 }),
-                ...generatePhysicalChemicalSection(product),
+                ...generatePhysicalChemicalSection(p),
                 new Paragraph({
                     text: '4. CHỈ TIÊU VI SINH',
                     heading: 'Heading3',
                     spacing: { before: 400, after: 200 }
                 }),
-                ...generateMicrobiologicalSection(product),
+                ...generateMicrobiologicalSection(p),
+                new Paragraph({
+                    text: '\n\n',
+                    spacing: { before: 800 }
+                }),
+                new Paragraph({
+                    text: `Đại diện doanh nghiệp: ${user.name}`,
+                    alignment: AlignmentType.RIGHT,
+                    spacing: { before: 400 }
+                }),
+                new Paragraph({
+                    text: `Chức vụ: ${user.representativeRole || 'Giám đốc'}`,
+                    alignment: AlignmentType.RIGHT,
+                    spacing: { after: 100 }
+                })
             ]
         }]
     });
 
     const buffer = await Packer.toBuffer(doc);
-    const filename = `TCCS_${product.name.replace(/\s+/g, '_')}_${Date.now()}.docx`;
+    const filename = `TCCS_${p.name.replace(/\s+/g, '_')}_${Date.now()}.docx`;
     const filepath = path.join(EXPORTS_DIR, filename);
 
     await fs.writeFile(filepath, buffer);
@@ -119,18 +182,21 @@ function generateMicrobiologicalSection(product) {
 /**
  * Generate Testing Form
  */
-async function generateTestingForm(product, format) {
+async function generateTestingForm(product, format, user, modifiedData) {
     await ensureExportsDir();
+    const p = applyModifiedData(product, modifiedData);
 
-    // For simplicity, create a JSON file (in production, use xlsx library)
     const testingData = {
-        productName: product.name,
-        productCode: product.code,
-        requirements: product.testingRequirements || [],
-        totalCost: product.testingRequirements?.reduce((sum, item) => sum + (item.cost || 0), 0) || 0
+        company: user.company,
+        address: user.address,
+        phone: user.phone,
+        productName: p.name,
+        productCode: p.code,
+        requirements: p.testingRequirements || [],
+        totalCost: p.testingRequirements?.reduce((sum, item) => sum + (item.cost || 0), 0) || 0
     };
 
-    const filename = `PhieuKN_${product.name.replace(/\s+/g, '_')}_${Date.now()}.json`;
+    const filename = `PhieuKN_${p.name.replace(/\s+/g, '_')}_${Date.now()}.json`;
     const filepath = path.join(EXPORTS_DIR, filename);
 
     await fs.writeFile(filepath, JSON.stringify(testingData, null, 2));
@@ -141,59 +207,93 @@ async function generateTestingForm(product, format) {
 /**
  * Generate Declaration Form
  */
-async function generateDeclaration(product, format, user) {
+async function generateDeclaration(product, format, user, modifiedData) {
     await ensureExportsDir();
+    const p = applyModifiedData(product, modifiedData);
 
     const doc = new Document({
         sections: [{
             properties: {},
             children: [
                 new Paragraph({
-                    text: 'ĐƠN CÔNG BỐ SẢN PHẨM',
+                    text: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM',
+                    alignment: AlignmentType.CENTER,
+                    heading: 'Heading1'
+                }),
+                new Paragraph({
+                    text: 'Độc lập - Tự do - Hạnh phúc',
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 400 }
+                }),
+                new Paragraph({
+                    text: 'BẢN TỰ CÔNG BỐ SẢN PHẨM',
                     heading: 'Heading1',
                     alignment: AlignmentType.CENTER,
                     spacing: { after: 400 }
                 }),
                 new Paragraph({
-                    text: 'THÔNG TIN DOANH NGHIỆP',
+                    text: 'I. Thông tin về tổ chức, cá nhân tự công bố sản phẩm',
                     heading: 'Heading3',
                     spacing: { before: 400, after: 200 }
                 }),
                 new Paragraph({
-                    text: `Tên doanh nghiệp: ${user.company || '[Tên công ty]'}`,
+                    text: `Tên tổ chức, cá nhân: ${user.company || '[Tên công ty]'}`,
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `Người đại diện: ${user.name}`,
+                    text: `Địa chỉ: ${user.address || '[Địa chỉ]'}`,
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `Email: ${user.email}`,
-                    spacing: { after: 400 }
+                    text: `Điện thoại: ${user.phone || '[Điện thoại]'}`,
+                    spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: 'THÔNG TIN SẢN PHẨM',
+                    text: `Mã số doanh nghiệp: ${user.taxCode || '[Mã số thuế]'}`,
+                    spacing: { after: 100 }
+                }),
+                new Paragraph({
+                    text: 'II. Thông tin về sản phẩm',
                     heading: 'Heading3',
                     spacing: { before: 400, after: 200 }
                 }),
                 new Paragraph({
-                    text: `Tên sản phẩm: ${product.name}`,
+                    text: `1. Tên sản phẩm: ${p.name}`,
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `Mã HS: ${product.code}`,
+                    text: `2. Mã HS: ${p.code}`,
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `Danh mục: ${product.category}`,
+                    text: `3. Thành phần: [Như đã liệt kê trong hồ sơ kỹ thuật]`,
+                    spacing: { after: 100 }
+                }),
+                new Paragraph({
+                    text: 'III. Mẫu nhãn sản phẩm',
+                    heading: 'Heading3',
+                    spacing: { before: 400, after: 200 }
+                }),
+                new Paragraph({
+                    text: '(Đính kèm mẫu nhãn dự kiến)',
                     spacing: { after: 400 }
                 }),
+                new Paragraph({
+                    text: 'Chúng tôi xin cam đoan thực hiện đúng quy định của pháp luật!',
+                    alignment: AlignmentType.RIGHT,
+                    spacing: { before: 600 }
+                }),
+                new Paragraph({
+                    text: `${user.name}`,
+                    alignment: AlignmentType.RIGHT,
+                    spacing: { before: 800 }
+                })
             ]
         }]
     });
 
     const buffer = await Packer.toBuffer(doc);
-    const filename = `CongBo_${product.name.replace(/\s+/g, '_')}_${Date.now()}.docx`;
+    const filename = `CongBo_${p.name.replace(/\s+/g, '_')}_${Date.now()}.docx`;
     const filepath = path.join(EXPORTS_DIR, filename);
 
     await fs.writeFile(filepath, buffer);
@@ -204,33 +304,32 @@ async function generateDeclaration(product, format, user) {
 /**
  * Generate Label Template
  */
-async function generateLabel(product, format) {
+async function generateLabel(product, format, user, modifiedData) {
     await ensureExportsDir();
+    const p = applyModifiedData(product, modifiedData);
 
-    // For simplicity, create a text file (in production, use canvas or PDF)
     const labelContent = `
 ===========================================
-        ${product.name.toUpperCase()}
+        ${p.name.toUpperCase()}
 ===========================================
 
-Mã sản phẩm: ${product.code}
-Danh mục: ${product.category}
-
-Thành phần: [Nhập thành phần]
-Khối lượng tịnh: [Nhập khối lượng]
+Mã sản phẩm: ${p.code}
+Thành phần: ${p.labelingRequirements?.find(r => r.requirement === 'Thành phần')?.detail || '[X]'}
 
 NSX: DD/MM/YYYY
 HSD: DD/MM/YYYY
 
-Bảo quản: Nơi khô ráo, tránh ánh nắng
+Sản xuất tại:
+${user.company}
+Địa chỉ: ${user.address}
+Điện thoại: ${user.phone}
+MST: ${user.taxCode}
 
-[Tên công ty]
-[Địa chỉ]
-[Số điện thoại]
+Hướng dẫn: ${p.labelingRequirements?.find(r => r.requirement === 'Hướng dẫn bảo quản')?.detail || 'Nơi khô ráo'}
 ===========================================
   `;
 
-    const filename = `Nhan_${product.name.replace(/\s+/g, '_')}_${Date.now()}.txt`;
+    const filename = `Nhan_${p.name.replace(/\s+/g, '_')}_${Date.now()}.txt`;
     const filepath = path.join(EXPORTS_DIR, filename);
 
     await fs.writeFile(filepath, labelContent);
@@ -241,19 +340,17 @@ Bảo quản: Nơi khô ráo, tránh ánh nắng
 /**
  * Generate all documents as ZIP
  */
-async function generateAllDocuments(product, user) {
+async function generateAllDocuments(product, user, modifiedData) {
     await ensureExportsDir();
 
-    // Generate all documents
-    const tccs = await generateTCCS(product, 'docx', user);
-    const testing = await generateTestingForm(product, 'json');
-    const declaration = await generateDeclaration(product, 'docx', user);
-    const label = await generateLabel(product, 'txt');
+    const tccs = await generateTCCS(product, 'docx', user, modifiedData);
+    const testing = await generateTestingForm(product, 'json', user, modifiedData);
+    const declaration = await generateDeclaration(product, 'docx', user, modifiedData);
+    const label = await generateLabel(product, 'txt', user, modifiedData);
 
-    // In production, use archiver to create ZIP
-    // For now, return a manifest
     const manifest = {
         files: [tccs.filename, testing.filename, declaration.filename, label.filename],
+        company: user.company,
         product: product.name,
         generatedAt: new Date().toISOString()
     };

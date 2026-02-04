@@ -111,7 +111,53 @@ router.get('/me', require('../middleware/auth').protect, async (req, res, next) 
                 name: req.user.name,
                 email: req.user.email,
                 company: req.user.company,
+                taxCode: req.user.taxCode,
+                address: req.user.address,
+                phone: req.user.phone,
+                representativeRole: req.user.representativeRole,
+                logo: req.user.logo,
                 role: req.user.role
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// @route   PUT /api/auth/profile
+// @desc    Update user profile
+// @access  Private
+router.put('/profile', require('../middleware/auth').protect, async (req, res, next) => {
+    try {
+        const fieldsToUpdate = {
+            name: req.body.name,
+            company: req.body.company,
+            taxCode: req.body.taxCode,
+            address: req.body.address,
+            phone: req.body.phone,
+            representativeRole: req.body.representativeRole,
+            logo: req.body.logo
+        };
+
+        const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+            new: true,
+            runValidators: true
+        });
+
+        res.json({
+            success: true,
+            message: 'Cập nhật thông tin thành công',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                company: user.company,
+                taxCode: user.taxCode,
+                address: user.address,
+                phone: user.phone,
+                representativeRole: user.representativeRole,
+                logo: user.logo,
+                role: user.role
             }
         });
     } catch (error) {
