@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Tra cứu TCVN/QCVN - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        .container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* SIDEBAR STYLES */
+        .sidebar {
+            width: 380px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-card h3 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-card h4 {
+            color: #333;
+            font-size: 0.95em;
+            margin: 15px 0 8px 0;
+        }
+
+        .info-item {
+            padding: 12px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #667eea;
+        }
+
+        .info-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .info-item p {
+            color: #666;
+            font-size: 0.85em;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .info-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .info-link:hover {
+            text-decoration: underline;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 25px;
+            padding-bottom: 15px;
+            border-left: 2px solid #e0e0e0;
+        }
+
+        .timeline-item:last-child {
+            border-left: none;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+
+        .timeline-item strong {
+            color: #667eea;
+            font-size: 0.9em;
+        }
+
+        .timeline-item p {
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+
+        .agency-box {
+            background: white;
+            border: 2px solid #e8ecff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .agency-box h5 {
+            color: #333;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .agency-box p {
+            color: #666;
+            font-size: 0.8em;
+            line-height: 1.5;
+            margin: 3px 0;
+        }
+
+        .agency-box .contact {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .market-item {
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e8ecff;
+        }
+
+        .market-item .flag {
+            font-size: 1.5em;
+            margin-right: 8px;
+        }
+
+        .market-item strong {
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .market-item ul {
+            margin: 8px 0 0 20px;
+            padding: 0;
+        }
+
+        .market-item li {
+            color: #666;
+            font-size: 0.82em;
+            line-height: 1.6;
+            margin-bottom: 3px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #5b7bd5;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .search-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .search-box h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            background: #667eea;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .search-btn:hover {
+            background: #5568d3;
+        }
+
+        /* Autocomplete Suggestions */
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #667eea;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .autocomplete-suggestions.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggestion-item:hover {
+            background: #f8f9ff;
+        }
+
+        .suggestion-code {
+            display: inline-block;
+            background: #e8ecff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-right: 8px;
+            font-family: monospace;
+            color: #667eea;
+        }
+
+        .suggestion-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .suggestion-path {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 3px;
+        }
+
+        .suggestion-highlight {
+            background: #fff176;
+            font-weight: bold;
+        }
+
+        .quick-categories {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .quick-cat-item {
+            background: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-cat-item:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .steps-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .step-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .step-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .step-card ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .step-card ul li {
+            padding: 5px 0;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .step-card ul li:before {
+            content: '✓';
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .result-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .result-header {
+            margin-bottom: 20px;
+        }
+
+        .result-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95em;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Editable input styles */
+        .editable-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .editable-input:hover {
+            border-color: #c0c0c0;
+        }
+
+        .editable-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .editable-input.modified {
+            background: #fff9e6;
+            border-color: #ffc107;
+        }
+
+        .edit-icon {
+            display: inline-block;
+            color: #999;
+            font-size: 0.85em;
+            margin-left: 5px;
+        }
+
+        h4 {
+            color: #667eea;
+            margin: 25px 0 15px 0;
+        }
+
+        .note-box {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin-top: 20px;
+        }
+
+        .note-box h5 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .note-box ul {
+            color: #333;
+            line-height: 1.8;
+            margin-left: 20px;
+        }
+
+        .edit-hint {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            border-left: 3px solid #1565c0;
+        }
+
+        /* Export Tab Styles */
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .export-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+            border: 2px solid #e8ecff;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .export-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .export-card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .export-card h3 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .export-card p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .export-card-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .export-card-features li {
+            color: #555;
+            font-size: 0.85em;
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .export-card-features li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .export-btn:active {
+            transform: scale(0.98);
+        }
+
+        .export-all-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .export-all-section h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .export-all-section p {
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .export-all-btn {
+            background: white;
+            color: #667eea;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .export-all-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .checklist-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .checklist-section h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .checklist-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            color: #333;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        .file-format-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .format-option {
+            padding: 8px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .format-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .format-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 320px;
+            }
+            .export-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+
+            .steps-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <h1>🔍 Hệ thống Tra cứu TCVN/QCVN</h1>
+                <p>Tự động tạo Tiêu chuẩn, Kiểm nghiệm & Hồ sơ Công bố Sản phẩm</p>
+            </div>
+
+            <!-- Search Box -->
+            <div class="search-box">
+                <h3>Tra cứu sản phẩm của bạn</h3>
+                
+                <div class="search-input-wrapper">
+                    <input type="text" 
+                           class="search-input" 
+                           id="productInput" 
+                           placeholder="Nhập tên sản phẩm (VD: Cà phê, Nước tinh khiết...)"
+                           oninput="showSuggestions(this.value)"
+                           onblur="setTimeout(() => hideSuggestions(), 200)">
+                    
+                    <!-- Autocomplete Dropdown -->
+                    <div class="autocomplete-suggestions" id="suggestions"></div>
+                </div>
+
+                <button class="search-btn" onclick="searchProduct()">🔎 Tra cứu</button>
+
+                <p style="color: #999; margin: 15px 0 10px 0; font-size: 0.9em;">📌 Danh mục phổ biến:</p>
+                <div class="quick-categories">
+                    <div class="quick-cat-item" onclick="quickSearch('Cà phê')">☕ Cà phê</div>
+                    <div class="quick-cat-item" onclick="quickSearch('Nước tinh khiết')">💧 Nước uống</div>
+                    <div class="quick-cat-item" onclick="quickSearch('Bánh quy')">🍪 Bánh kẹo</div>
+                    <div class="quick-cat-item" onclick="quickSearch('Nước mắm')">🥫 Gia vị</div>
+                    <div class="quick-cat-item" onclick="quickSearch('Sữa tươi')">🥛 Sữa</div>
+                    <div class="quick-cat-item" onclick="quickSearch('Gạo')">🌾 Ngũ cốc</div>
+                </div>
+            </div>
+
+            <!-- 3 Steps -->
+            <div class="steps-section">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h4>Tra cứu Tiêu chuẩn</h4>
+                    <p>Hệ thống tự động tra cứu TCVN/QCVN phù hợp</p>
+                    <ul>
+                        <li>TCVN Chất lượng</li>
+                        <li>QCVN An toàn TP</li>
+                        <li>Thông tư pháp lý</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h4>Tạo Chỉ tiêu Tự động</h4>
+                    <p>AI tổng hợp và tạo bảng chỉ tiêu đầy đủ</p>
+                    <ul>
+                        <li>Chỉ tiêu Chất lượng</li>
+                        <li>Chỉ tiêu An toàn</li>
+                        <li>Yêu cầu Bao bì - Nhãn</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h4>Xuất Hồ sơ Hoàn chỉnh</h4>
+                    <p>Tạo bộ tài liệu công bố sản phẩm</p>
+                    <ul>
+                        <li>Tiêu chuẩn cơ sở (TCCS)</li>
+                        <li>Phiếu kiểm nghiệm</li>
+                        <li>Hồ sơ công bố đầy đủ</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div class="result-section" id="resultSection">
+                <div class="result-header">
+                    <h2>Kết quả tra cứu: <span id="productName">Cà phê</span></h2>
+                    <span class="status-badge">✓ Đã tìm thấy tiêu chuẩn phù hợp</span>
+                </div>
+
+                <div class="progress-bar">100%</div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(0)">📊 BẢN TIÊU CHUẨN</button>
+                    <button class="tab" onclick="switchTab(1)">🛡️ Chỉ tiêu An toàn TP</button>
+                    <button class="tab" onclick="switchTab(2)">🔬 Yêu cầu Kiểm nghiệm</button>
+                    <button class="tab" onclick="switchTab(3)">📦 Bao bì - Nhãn</button>
+                    <button class="tab" onclick="switchTab(4)">📤 XUẤT HỒ SƠ</button>
+                </div>
+
+                <!-- Tab 1: BẢN TIÊU CHUẨN -->
+                <div class="tab-content active" id="tab0">
+                    <div class="edit-hint">
+                        💡 <strong>Mẹo:</strong> Bạn có thể chỉnh sửa các giá trị trong cột "Yêu cầu" và "Giá trị" để phù hợp với sản phẩm của mình
+                    </div>
+
+                    <h4>1. Chỉ tiêu Cảm quan</h4>
+                    <table>
+                        <tr>
+                            <th>Tiêu chí</th>
+                            <th>Yêu cầu <span class="edit-icon">✏️</span></th>
+                        </tr>
+                        <tr>
+                            <td>Màu sắc</td>
+                            <td><input type="text" class="editable-input" value="Nâu đậm đặc trưng của cà phê rang" onchange="markModified(this)"></td>
+                        </tr>
+                        <tr>
+                            <td>Mùi</td>
+                            <td><input type="text" class="editable-input" value="Mùi cà phê rang tự nhiên, không mùi lạ" onchange="markModified(this)"></td>
+                        </tr>
+                        <tr>
+                            <td>Vị</td>
+                            <td><input type="text" class="editable-input" value="Đắng dịu đặc trưng, không mốc, không khét" onchange="markModified(this)"></td>
+                        </tr>
+                        <tr>
+                            <td>Trạng thái</td>
+                            <td><input type="text" class="editable-input" value="Bột mịn hoặc hạt đồng đều, không vón cục" onchange="markModified(this)"></td>
+                        </tr>
+                    </table>
+
+                    <h4>2. Chỉ tiêu Lý hóa</h4>
+                    <table>
+                        <tr>
+                            <th>Chỉ tiêu</th>
+                            <th style="width: 200px;">Giá trị <span class="edit-icon">✏️</span></th>
+                            <th>Phương pháp thử</th>
+                        </tr>
+                        <tr>
+                            <td>Độ ẩm</td>
+                            <td><input type="text" class="editable-input" value="≤ 5%" onchange="markModified(this)"></td>
+                            <td>TCVN 6722-1:2000</td>
+                        </tr>
+                        <tr>
+                            <td>Hàm lượng Caffeine</td>
+                            <td><input type="text" class="editable-input" value="1.0 – 2.5%" onchange="markModified(this)"></td>
+                            <td>AOAC 976.13</td>
+                        </tr>
+                        <tr>
+                            <td>Tro tổng số</td>
+                            <td><input type="text" class="editable-input" value="≤ 5%" onchange="markModified(this)"></td>
+                            <td>TCVN 6722-2:2000</td>
+                        </tr>
+                        <tr>
+                            <td>Tro không tan trong HCl</td>
+                            <td><input type="text" class="editable-input" value="≤ 0.5%" onchange="markModified(this)"></td>
+                            <td>TCVN 6722-3:2000</td>
+                        </tr>
+                        <tr>
+                            <td>Chất hòa tan</td>
+                            <td><input type="text" class="editable-input" value="≥ 20%" onchange="markModified(this)"></td>
+                            <td>TCVN 7538:2005</td>
+                        </tr>
+                        <tr>
+                            <td>Tạp chất</td>
+                            <td><input type="text" class="editable-input" value="Không phát hiện" onchange="markModified(this)"></td>
+                            <td>Kiểm tra bằng mắt thường</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Tab 2: An toàn TP -->
+                <div class="tab-content" id="tab1">
+                    <div class="edit-hint">
+                        💡 <strong>Mẹo:</strong> Các giới hạn an toàn có thể được điều chỉnh dựa trên yêu cầu cụ thể của sản phẩm
+                    </div>
+
+                    <h4>A. Chỉ tiêu Vi sinh</h4>
+                    <table>
+                        <tr>
+                            <th>Chỉ tiêu</th>
+                            <th style="width: 200px;">Giới hạn <span class="edit-icon">✏️</span></th>
+                            <th>Phương pháp thử</th>
+                        </tr>
+                        <tr>
+                            <td>Tổng số vi khuẩn hiếu khí</td>
+                            <td><input type="text" class="editable-input" value="≤ 10⁵ CFU/g" onchange="markModified(this)"></td>
+                            <td>TCVN 4884:2005</td>
+                        </tr>
+                        <tr>
+                            <td>Coliforms</td>
+                            <td><input type="text" class="editable-input" value="≤ 10² CFU/g" onchange="markModified(this)"></td>
+                            <td>TCVN 6846:2008</td>
+                        </tr>
+                        <tr>
+                            <td>E.coli</td>
+                            <td><input type="text" class="editable-input" value="Không phát hiện trong 1g" onchange="markModified(this)"></td>
+                            <td>TCVN 6846:2008</td>
+                        </tr>
+                        <tr>
+                            <td>Salmonella</td>
+                            <td><input type="text" class="editable-input" value="Không phát hiện/25g" onchange="markModified(this)"></td>
+                            <td>TCVN 4829:2005</td>
+                        </tr>
+                    </table>
+
+                    <h4>B. Kim loại nặng</h4>
+                    <table>
+                        <tr>
+                            <th>Chỉ tiêu</th>
+                            <th style="width: 200px;">Giới hạn <span class="edit-icon">✏️</span></th>
+                            <th>Phương pháp thử</th>
+                        </tr>
+                        <tr>
+                            <td>Chì (Pb)</td>
+                            <td><input type="text" class="editable-input" value="≤ 0.2 mg/kg" onchange="markModified(this)"></td>
+                            <td>AOAC 999.10</td>
+                        </tr>
+                        <tr>
+                            <td>Cadimi (Cd)</td>
+                            <td><input type="text" class="editable-input" value="≤ 0.1 mg/kg" onchange="markModified(this)"></td>
+                            <td>AOAC 999.10</td>
+                        </tr>
+                        <tr>
+                            <td>Asen (As)</td>
+                            <td><input type="text" class="editable-input" value="≤ 0.2 mg/kg" onchange="markModified(this)"></td>
+                            <td>AOAC 986.15</td>
+                        </tr>
+                    </table>
+
+                    <h4>C. Độc tố vi nấm</h4>
+                    <table>
+                        <tr>
+                            <th>Chỉ tiêu</th>
+                            <th style="width: 200px;">Giới hạn <span class="edit-icon">✏️</span></th>
+                            <th>Phương pháp thử</th>
+                        </tr>
+                        <tr>
+                            <td>Ochratoxin A</td>
+                            <td><input type="text" class="editable-input" value="≤ 5 µg/kg" onchange="markModified(this)"></td>
+                            <td>EN 14132:2003</td>
+                        </tr>
+                        <tr>
+                            <td>Aflatoxin B1</td>
+                            <td><input type="text" class="editable-input" value="≤ 5 µg/kg" onchange="markModified(this)"></td>
+                            <td>AOAC 2005.08</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Tab 3: Yêu cầu Kiểm nghiệm -->
+                <div class="tab-content" id="tab2">
+                    <h4>📋 PHIẾU YÊU CẦU KIỂM NGHIỆM</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th>Chỉ tiêu</th>
+                                <th>Phương pháp</th>
+                                <th style="width: 120px;">Chi phí (đ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: #f0f0f0;">
+                                <td colspan="4"><strong>A. CHẤT LƯỢNG</strong></td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Độ ẩm</td>
+                                <td>TCVN 6722-1:2000</td>
+                                <td>200.000</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Caffeine</td>
+                                <td>AOAC 976.13</td>
+                                <td>500.000</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Tro tổng số</td>
+                                <td>TCVN 6722-2:2000</td>
+                                <td>200.000</td>
+                            </tr>
+                            <tr style="background: #f0f0f0;">
+                                <td colspan="4"><strong>B. VI SINH</strong></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Tổng số vi khuẩn hiếu khí</td>
+                                <td>TCVN 4884:2005</td>
+                                <td>300.000</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>E.coli</td>
+                                <td>TCVN 6846:2008</td>
+                                <td>350.000</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Salmonella</td>
+                                <td>TCVN 4829:2005</td>
+                                <td>800.000</td>
+                            </tr>
+                            <tr style="background: #f0f0f0;">
+                                <td colspan="4"><strong>C. KIM LOẠI NẶNG</strong></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Chì (Pb)</td>
+                                <td>AOAC 999.10</td>
+                                <td>600.000</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Cadimi (Cd)</td>
+                                <td>AOAC 999.10</td>
+                                <td>600.000</td>
+                            </tr>
+                            <tr style="background: #e8f5e9; font-weight: bold;">
+                                <td colspan="3" style="text-align: right;">TỔNG CHI PHÍ ƯỚC TÍNH:</td>
+                                <td>3.550.000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="note-box">
+                        <h5>📌 Thông tin thêm:</h5>
+                        <ul>
+                            <li><strong>Thời gian:</strong> 7-14 ngày làm việc</li>
+                            <li><strong>Khối lượng mẫu:</strong> Tối thiểu 500g</li>
+                            <li><strong>Số lượng mẫu:</strong> 3 mẫu song song + 1 mẫu lưu</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Bao bì - Nhãn -->
+                <div class="tab-content" id="tab3">
+                    <h4>Yêu cầu Bao bì</h4>
+                    <table>
+                        <tr>
+                            <th>Yêu cầu</th>
+                            <th>Chi tiết</th>
+                        </tr>
+                        <tr>
+                            <td>Loại bao bì</td>
+                            <td>Túi composite, hộp kim loại đảm bảo tiếp xúc thực phẩm</td>
+                        </tr>
+                        <tr>
+                            <td>Tiêu chuẩn</td>
+                            <td>QCVN 12-1:2011/BYT</td>
+                        </tr>
+                        <tr>
+                            <td>Tính năng</td>
+                            <td>Kín khí, chống ẩm, không thấm mùi</td>
+                        </tr>
+                    </table>
+
+                    <h4>Nội dung Ghi nhãn (TT 43/2017/TT-BYT)</h4>
+                    <table>
+                        <tr>
+                            <th>Thông tin bắt buộc</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                        <tr>
+                            <td>✓ Tên sản phẩm</td>
+                            <td>CÀ PHÊ BỘT</td>
+                        </tr>
+                        <tr>
+                            <td>✓ Thành phần</td>
+                            <td>100% hạt cà phê Robusta rang xay</td>
+                        </tr>
+                        <tr>
+                            <td>✓ Khối lượng tịnh</td>
+                            <td>500g</td>
+                        </tr>
+                        <tr>
+                            <td>✓ Ngày sản xuất / HSD</td>
+                            <td>DD/MM/YYYY - 24 tháng từ NSX</td>
+                        </tr>
+                        <tr>
+                            <td>✓ Hướng dẫn bảo quản</td>
+                            <td>Nơi khô ráo, tránh ánh nắng trực tiếp</td>
+                        </tr>
+                        <tr>
+                            <td>✓ Tên & địa chỉ cơ sở SX</td>
+                            <td>[Tên công ty - Địa chỉ - ĐT]</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top: 30px; padding: 30px; background: #f8f9fa; border-radius: 10px; border: 2px dashed #667eea;">
+                        <div style="text-align: center;">
+                            <h3 style="color: #764ba2; margin-bottom: 10px;">☕ CÀ PHÊ BỘT CAO CẤP</h3>
+                            <p style="color: #666; margin: 10px 0;">Premium Ground Coffee</p>
+                            <hr style="margin: 15px 0; border: none; border-top: 2px solid #e0e0e0;">
+                            <p><strong>Khối lượng tịnh:</strong> 500g</p>
+                            <p><strong>NSX:</strong> DD/MM/YYYY | <strong>HSD:</strong> DD/MM/YYYY</p>
+                            <p style="font-size: 0.9em; color: #666; margin-top: 15px;">
+                                <strong>CÔNG TY TNHH ABC</strong><br>
+                                Địa chỉ: [Số nhà, Đường, Quận, TP]
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 5: XUẤT HỒ SƠ -->
+                <div class="tab-content" id="tab4">
+                    <div class="edit-hint">
+                        📥 <strong>Xuất hồ sơ hoàn chỉnh:</strong> Tải về các tài liệu cần thiết cho việc công bố sản phẩm
+                    </div>
+
+                    <div class="export-grid">
+                        <!-- Card 1: TCCS -->
+                        <div class="export-card">
+                            <div class="export-card-icon">📄</div>
+                            <h3>Tiêu chuẩn Cơ sở (TCCS)</h3>
+                            <p>Tài liệu đầy đủ về tiêu chuẩn chất lượng sản phẩm theo quy định</p>
+                            <ul class="export-card-features">
+                                <li>Thông tin cơ sở sản xuất</li>
+                                <li>Chỉ tiêu chất lượng chi tiết</li>
+                                <li>Phương pháp thử nghiệm</li>
+                                <li>Yêu cầu bao gói, ghi nhãn</li>
+                                <li>Định dạng chuẩn theo BYT</li>
+                            </ul>
+                            <div class="file-format-selector">
+                                <div class="format-option selected" onclick="selectFormat(this)">📝 DOCX</div>
+                                <div class="format-option" onclick="selectFormat(this)">📕 PDF</div>
+                            </div>
+                            <button class="export-btn" onclick="exportDocument('tccs')">⬇️ Tải TCCS</button>
+                        </div>
+
+                        <!-- Card 2: Phiếu kiểm nghiệm -->
+                        <div class="export-card">
+                            <div class="export-card-icon">🔬</div>
+                            <h3>Phiếu Yêu cầu Kiểm nghiệm</h3>
+                            <p>Mẫu phiếu gửi đơn vị kiểm nghiệm với đầy đủ chỉ tiêu cần thử</p>
+                            <ul class="export-card-features">
+                                <li>Danh sách chỉ tiêu đầy đủ</li>
+                                <li>Phương pháp thử cụ thể</li>
+                                <li>Ước tính chi phí</li>
+                                <li>Thời gian dự kiến</li>
+                                <li>Mẫu chuẩn đơn vị KN</li>
+                            </ul>
+                            <div class="file-format-selector">
+                                <div class="format-option selected" onclick="selectFormat(this)">📝 DOCX</div>
+                                <div class="format-option" onclick="selectFormat(this)">📊 XLSX</div>
+                            </div>
+                            <button class="export-btn" onclick="exportDocument('testing')">⬇️ Tải Phiếu KN</button>
+                        </div>
+
+                        <!-- Card 3: Hồ sơ công bố -->
+                        <div class="export-card">
+                            <div class="export-card-icon">📋</div>
+                            <h3>Hồ sơ Công bố Sản phẩm</h3>
+                            <p>Bộ hồ sơ hoàn chỉnh để nộp cơ quan ATTP</p>
+                            <ul class="export-card-features">
+                                <li>Mẫu đơn công bố sản phẩm</li>
+                                <li>TCCS kèm theo</li>
+                                <li>Danh sách tài liệu cần thiết</li>
+                                <li>Hướng dẫn nộp hồ sơ</li>
+                                <li>Checklist kiểm tra</li>
+                            </ul>
+                            <div class="file-format-selector">
+                                <div class="format-option selected" onclick="selectFormat(this)">📝 DOCX</div>
+                                <div class="format-option" onclick="selectFormat(this)">📕 PDF</div>
+                            </div>
+                            <button class="export-btn" onclick="exportDocument('declaration')">⬇️ Tải Hồ sơ CB</button>
+                        </div>
+
+                        <!-- Card 4: Nhãn mẫu -->
+                        <div class="export-card">
+                            <div class="export-card-icon">🏷️</div>
+                            <h3>Mẫu Nhãn Sản phẩm</h3>
+                            <p>Thiết kế nhãn phù hợp với quy chuẩn pháp lý</p>
+                            <ul class="export-card-features">
+                                <li>Nội dung đầy đủ theo TT 43/2017</li>
+                                <li>Bố cục chuẩn quy định</li>
+                                <li>File thiết kế có thể chỉnh sửa</li>
+                                <li>Hướng dẫn in ấn</li>
+                                <li>Checklist kiểm tra nhãn</li>
+                            </ul>
+                            <div class="file-format-selector">
+                                <div class="format-option selected" onclick="selectFormat(this)">🎨 PNG</div>
+                                <div class="format-option" onclick="selectFormat(this)">📕 PDF</div>
+                            </div>
+                            <button class="export-btn" onclick="exportDocument('label')">⬇️ Tải Mẫu Nhãn</button>
+                        </div>
+                    </div>
+
+                    <!-- Export All Section -->
+                    <div class="export-all-section">
+                        <h3>📦 Tải Trọn bộ Hồ sơ</h3>
+                        <p>Tải về tất cả tài liệu cần thiết trong một file nén duy nhất</p>
+                        <button class="export-all-btn" onclick="exportAll()">⬇️ TẢI TẤT CẢ (ZIP)</button>
+                    </div>
+
+                    <!-- Checklist Section -->
+                    <div class="checklist-section">
+                        <h4>✅ Checklist Hoàn thiện Hồ sơ</h4>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check1">
+                            <label for="check1">Đã hoàn thiện Tiêu chuẩn cơ sở (TCCS)</label>
+                        </div>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check2">
+                            <label for="check2">Đã gửi mẫu đến đơn vị kiểm nghiệm</label>
+                        </div>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check3">
+                            <label for="check3">Đã nhận kết quả kiểm nghiệm đạt yêu cầu</label>
+                        </div>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check4">
+                            <label for="check4">Đã chuẩn bị giấy chứng nhận đăng ký kinh doanh</label>
+                        </div>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check5">
+                            <label for="check5">Đã có giấy phép vệ sinh ATTP cơ sở sản xuất</label>
+                        </div>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check6">
+                            <label for="check6">Đã thiết kế nhãn phù hợp quy định</label>
+                        </div>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check7">
+                            <label for="check7">Đã chuẩn bị hồ sơ công bố sản phẩm hoàn chỉnh</label>
+                        </div>
+                        
+                        <div class="checklist-item">
+                            <input type="checkbox" id="check8">
+                            <label for="check8">Đã xác định cơ quan tiếp nhận hồ sơ (Chi cục ATTP)</label>
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <h5>📌 Lưu ý quan trọng:</h5>
+                        <ul>
+                            <li><strong>Định dạng file:</strong> Tất cả file đều có thể chỉnh sửa để phù hợp với thông tin doanh nghiệp</li>
+                            <li><strong>Tham khảo pháp lý:</strong> Luôn kiểm tra văn bản pháp luật mới nhất trước khi nộp hồ sơ</li>
+                            <li><strong>Thời gian xử lý:</strong> Chi cục ATTP thường xử lý hồ sơ trong 3-5 ngày làm việc</li>
+                            <li><strong>Phí công bố:</strong> Miễn phí công bố sản phẩm theo quy định hiện hành</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR - RIGHT -->
+        <div class="sidebar" id="sidebar" style="display: none;">
+            <!-- 1. THỦ TỤC PHÁP LÝ -->
+            <div class="sidebar-card">
+                <h3>📋 THỦ TỤC PHÁP LÝ LIÊN QUAN</h3>
+                
+                <div class="timeline-item">
+                    <strong>Công bố sản phẩm</strong>
+                    <p>Thông tư 24/2019/TT-BYT về công bố sản phẩm thực phẩm</p>
+                    <a href="https://thuvienphapluat.vn/van-ban/The-thao-Y-te/Thong-tu-24-2019-TT-BYT-cong-bo-san-pham-thuc-pham-436033.aspx" class="info-link" target="_blank">→ Xem chi tiết</a>
+                </div>
+
+                <div class="timeline-item">
+                    <strong>Giấy phép ATTP</strong>
+                    <p>NĐ 15/2018/NĐ-CP về điều kiện ĐKKD trong lĩnh vực TP</p>
+                    <a href="https://thuvienphapluat.vn/van-ban/Thuong-mai/Nghi-dinh-15-2018-ND-CP-dieu-kien-dau-tu-kinh-doanh-linh-vuc-an-toan-thuc-pham-367962.aspx" class="info-link" target="_blank">→ Xem chi tiết</a>
+                </div>
+
+                <div class="timeline-item">
+                    <strong>Quy chuẩn ghi nhãn</strong>
+                    <p>TT 43/2017/TT-BYT về ghi nhãn thực phẩm đóng gói sẵn</p>
+                    <a href="https://thuvienphapluat.vn/van-ban/The-thao-Y-te/Thong-tu-43-2017-TT-BYT-ghi-nhan-thuc-pham-dong-goi-san-375256.aspx" class="info-link" target="_blank">→ Xem chi tiết</a>
+                </div>
+
+                <div class="timeline-item">
+                    <strong>Luật An toàn TP</strong>
+                    <p>Luật số 55/2010/QH12 về An toàn thực phẩm</p>
+                    <a href="https://thuvienphapluat.vn/van-ban/The-thao-Y-te/Luat-An-toan-thuc-pham-2010-108818.aspx" class="info-link" target="_blank">→ Xem chi tiết</a>
+                </div>
+            </div>
+
+            <!-- 2. CƠ QUAN QUẢN LÝ -->
+            <div class="sidebar-card">
+                <h3>🏛️ CƠ QUAN QUẢN LÝ NHÀ NƯỚC</h3>
+                
+                <div class="agency-box">
+                    <h5>🏢 Cục An toàn Thực phẩm - BYT</h5>
+                    <p>138A Giảng Võ, Ba Đình, Hà Nội</p>
+                    <p class="contact">☎ 024.6273.4614</p>
+                    <p class="contact">✉ cuctpattvs@moh.gov.vn</p>
+                    <a href="http://vfa.gov.vn" class="info-link" target="_blank">→ Website</a>
+                </div>
+
+                <div class="agency-box">
+                    <h5>🏢 Chi cục ATTP TP. Hà Nội</h5>
+                    <p>Số 28 Trần Thánh Tông, Hai Bà Trưng, HN</p>
+                    <p class="contact">☎ 024.3974.8699</p>
+                    <a href="http://cucatphanoi.vn" class="info-link" target="_blank">→ Website</a>
+                </div>
+
+                <div class="agency-box">
+                    <h5>🏢 Chi cục ATTP TP.HCM</h5>
+                    <p>59 Nguyễn Văn Thủ, Q.1, TP.HCM</p>
+                    <p class="contact">☎ 028.3825.7404</p>
+                    <a href="http://cucatphanoi.vn" class="info-link" target="_blank">→ Website</a>
+                </div>
+
+                <div class="info-item">
+                    <strong>💡 Lưu ý quan trọng:</strong>
+                    <p>Công bố sản phẩm tại Chi cục ATTP theo địa phương nơi đặt cơ sở sản xuất</p>
+                </div>
+            </div>
+
+            <!-- 3. ĐƠN VỊ KIỂM NGHIỆM -->
+            <div class="sidebar-card">
+                <h3>🔬 ĐƠN VỊ KIỂM NGHIỆM</h3>
+                
+                <div class="agency-box">
+                    <h5>🧪 Trung tâm Kỹ thuật Tiêu chuẩn Đo lường Chất lượng 3 (QUATEST 3)</h5>
+                    <p>17 Lý Thường Kiệt, Q.10, TP.HCM</p>
+                    <p class="contact">☎ 028.3862.4567</p>
+                    <p class="contact">✉ info@quatest3.com.vn</p>
+                    <a href="http://www.quatest3.com.vn" class="info-link" target="_blank">→ Website</a>
+                </div>
+
+                <div class="agency-box">
+                    <h5>🧪 Trung tâm Kiểm nghiệm Thuốc, Mỹ phẩm, TP (NIFC)</h5>
+                    <p>3 Quang Trung, Hà Đông, Hà Nội</p>
+                    <p class="contact">☎ 024.3854.7633</p>
+                    <a href="http://nifc.moh.gov.vn" class="info-link" target="_blank">→ Website</a>
+                </div>
+
+                <div class="agency-box">
+                    <h5>🧪 Viện Kiểm nghiệm ATTP Quốc gia (NaFIQA)</h5>
+                    <p>65 Phùng Hưng, Hà Đông, Hà Nội</p>
+                    <p class="contact">☎ 024.3369.0929</p>
+                    <a href="http://nafiqa.gov.vn" class="info-link" target="_blank">→ Website</a>
+                </div>
+
+                <div class="info-item">
+                    <strong>💰 Chi phí ước tính:</strong>
+                    <p>• Chỉ tiêu cơ bản: 3-5 triệu VNĐ<br>
+                    • Chỉ tiêu đầy đủ: 7-15 triệu VNĐ<br>
+                    • Thời gian: 7-14 ngày làm việc</p>
+                </div>
+            </div>
+
+            <!-- 4. THỊ TRƯỜNG QUỐC TẾ -->
+            <div class="sidebar-card">
+                <h3>🌍 YÊU CẦU THỊ TRƯỜNG QUỐC TẾ</h3>
+                
+                <div class="market-item">
+                    <div><span class="flag">🇺🇸</span><strong>Hoa Kỳ (FDA)</strong></div>
+                    <ul>
+                        <li>FDA Registration (đăng ký cơ sở)</li>
+                        <li>Prior Notice (thông báo trước nhập khẩu)</li>
+                        <li>FSMA (Food Safety Modernization Act)</li>
+                        <li>Giới hạn Ochratoxin A: ≤ 10 ppb</li>
+                    </ul>
+                    <a href="https://www.fda.gov/food" class="info-link" target="_blank">→ FDA.gov</a>
+                </div>
+
+                <div class="market-item">
+                    <div><span class="flag">🇪🇺</span><strong>EU (Liên minh Châu Âu)</strong></div>
+                    <ul>
+                        <li>EC Regulation 178/2002 (truy xuất nguồn gốc)</li>
+                        <li>Ochratoxin A: ≤ 5 µg/kg (cà phê rang)</li>
+                        <li>Aflatoxin B1: ≤ 5 µg/kg</li>
+                        <li>Residue limits theo EC 396/2005</li>
+                    </ul>
+                    <a href="https://ec.europa.eu/food" class="info-link" target="_blank">→ EC Food</a>
+                </div>
+
+                <div class="market-item">
+                    <div><span class="flag">🇯🇵</span><strong>Nhật Bản (MHLW)</strong></div>
+                    <ul>
+                        <li>Food Sanitation Law</li>
+                        <li>Certificate of origin (C/O)</li>
+                        <li>Yêu cầu kiểm dịch thực vật</li>
+                        <li>Ghi nhãn theo JAS standards</li>
+                    </ul>
+                    <a href="https://www.mhlw.go.jp/english" class="info-link" target="_blank">→ MHLW</a>
+                </div>
+
+                <div class="market-item">
+                    <div><span class="flag">🇰🇷</span><strong>Hàn Quốc (MFDS)</strong></div>
+                    <ul>
+                        <li>Import Food Safety Registration</li>
+                        <li>K-REACH (chất hóa học)</li>
+                        <li>Ghi nhãn tiếng Hàn</li>
+                        <li>Certificate of Free Sale</li>
+                    </ul>
+                    <a href="https://www.mfds.go.kr/eng" class="info-link" target="_blank">→ MFDS</a>
+                </div>
+
+                <div class="info-item">
+                    <strong>📌 Chứng nhận phổ biến:</strong>
+                    <p>
+                        <span class="badge info">ISO 22000</span>
+                        <span class="badge info">HACCP</span>
+                        <span class="badge info">HALAL</span>
+                        <span class="badge info">ORGANIC</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database sản phẩm với danh mục
+        const products = [
+            {
+                name: 'Cà phê bột',
+                code: '09011210',
+                category: 'Chương 9 > 0901 > Cà phê, đã rang',
+                path: 'CÀ PHÊ, CHÈ, CHÈ PARAGOAY VÀ CÁC LOẠI GIA VỊ'
+            },
+            {
+                name: 'Cà phê rang nguyên hạt',
+                code: '09011210',
+                category: 'Chương 9 > 0901 > Cà phê, đã rang',
+                path: 'CÀ PHÊ, CHÈ, CHÈ PARAGOAY VÀ CÁC LOẠI GIA VỊ'
+            },
+            {
+                name: 'Cà phê hòa tan',
+                code: '2101',
+                category: 'Chương 21 > Chế phẩm thực phẩm khác',
+                path: 'CHẾ PHẨM THỰC PHẨM KHÁC'
+            },
+            {
+                name: 'Nước tinh khiết',
+                code: '220190',
+                category: 'Chương 22 > 2201 > Nước đóng chai',
+                path: 'ĐỒ UỐNG, RƯỢU VÀ GIẤM'
+            },
+            {
+                name: 'Nước khoáng thiên nhiên',
+                code: '220110',
+                category: 'Chương 22 > 2201 > Nước khoáng',
+                path: 'ĐỒ UỐNG, RƯỢU VÀ GIẤM'
+            },
+            {
+                name: 'Nước suối',
+                code: '220110',
+                category: 'Chương 22 > 2201 > Nước khoáng',
+                path: 'ĐỒ UỐNG, RƯỢU VÀ GIẤM'
+            },
+            {
+                name: 'Bánh quy',
+                code: '1905',
+                category: 'Chương 19 > Bánh, bánh quy',
+                path: 'CHẾ PHẨM TỪ NGŨ CỐC, BỘT, TINH BỘT'
+            },
+            {
+                name: 'Gạo trắng',
+                code: '1006',
+                category: 'Chương 10 > Gạo',
+                path: 'NGŨ CỐC'
+            },
+            {
+                name: 'Nước mắm',
+                code: '2103',
+                category: 'Chương 21 > Nước sốt, gia vị',
+                path: 'CHẾ PHẨM THỰC PHẨM KHÁC'
+            },
+            {
+                name: 'Sữa tươi tiệt trùng',
+                code: '0401',
+                category: 'Chương 4 > Sữa và kem',
+                path: 'SẢN PHẨM CỦA CÔNG NGHIỆP THỰC PHẨM'
+            }
+        ];
+
+        // Mark input as modified
+        function markModified(input) {
+            input.classList.add('modified');
+        }
+
+        // Select file format
+        function selectFormat(element) {
+            const siblings = element.parentElement.querySelectorAll('.format-option');
+            siblings.forEach(s => s.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        // Export document
+        function exportDocument(type) {
+            const typeNames = {
+                'tccs': 'Tiêu chuẩn Cơ sở (TCCS)',
+                'testing': 'Phiếu Yêu cầu Kiểm nghiệm',
+                'declaration': 'Hồ sơ Công bố Sản phẩm',
+                'label': 'Mẫu Nhãn Sản phẩm'
+            };
+            
+            alert(`🎉 Đang chuẩn bị tải xuống: ${typeNames[type]}\n\n✓ File sẽ được tải về trong giây lát\n✓ Bạn có thể chỉnh sửa file theo nhu cầu`);
+        }
+
+        // Export all documents
+        function exportAll() {
+            alert('🎉 Đang chuẩn bị tải xuống TẤT CẢ tài liệu!\n\n📦 Bao gồm:\n✓ Tiêu chuẩn Cơ sở (TCCS)\n✓ Phiếu Kiểm nghiệm\n✓ Hồ sơ Công bố\n✓ Mẫu Nhãn\n\n⏳ File ZIP sẽ được tải về trong giây lát...');
+        }
+
+        // Show autocomplete suggestions
+        function showSuggestions(query) {
+            const suggestionsBox = document.getElementById('suggestions');
+            
+            if (!query || query.length < 2) {
+                suggestionsBox.classList.remove('active');
+                return;
+            }
+            
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(query.toLowerCase()) ||
+                p.category.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                suggestionsBox.classList.remove('active');
+                return;
+            }
+            
+            let html = '';
+            filtered.forEach(p => {
+                const highlighted = highlightText(p.name, query);
+                html += `
+                    <div class="suggestion-item" onmousedown="selectProduct('${p.name}')">
+                        <div>
+                            <span class="suggestion-code">${p.code}</span>
+                            <span class="suggestion-name">${highlighted}</span>
+                        </div>
+                        <div class="suggestion-path">${p.category}</div>
+                    </div>
+                `;
+            });
+            
+            suggestionsBox.innerHTML = html;
+            suggestionsBox.classList.add('active');
+        }
+
+        function highlightText(text, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="suggestion-highlight">$1</span>');
+        }
+
+        function selectProduct(name) {
+            document.getElementById('productInput').value = name;
+            hideSuggestions();
+            setTimeout(() => searchProduct(), 100);
+        }
+
+        function hideSuggestions() {
+            document.getElementById('suggestions').classList.remove('active');
+        }
+
+        function quickSearch(product) {
+            document.getElementById('productInput').value = product;
+            searchProduct();
+        }
+
+        function searchProduct() {
+            const input = document.getElementById('productInput').value;
+            if (!input.trim()) {
+                alert('Vui lòng nhập tên sản phẩm!');
+                return;
+            }
+            
+            // Show result section
+            document.getElementById('productName').textContent = input;
+            document.getElementById('resultSection').classList.add('active');
+            
+            // Show sidebar
+            document.getElementById('sidebar').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+        }
+    </script>
+</body>
+</html>
