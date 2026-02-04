@@ -7,7 +7,7 @@ const Home = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
     const searchRef = useRef(null);
 
@@ -21,7 +21,7 @@ const Home = () => {
             return;
         }
 
-        setLoading(true);
+
         try {
             const response = await productsAPI.search(value);
             setSuggestions(response.data.data || []);
@@ -30,7 +30,7 @@ const Home = () => {
             console.error('Search error:', error);
             setSuggestions([]);
         } finally {
-            setLoading(false);
+
         }
     };
 

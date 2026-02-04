@@ -13,27 +13,27 @@ const ProductDetail = () => {
     const [exportLoading, setExportLoading] = useState(false);
 
     useEffect(() => {
-        loadProduct();
-    }, [id]);
+        const loadProduct = async () => {
+            try {
+                const response = await productsAPI.getById(id);
+                setProduct(response.data.data);
 
-    const loadProduct = async () => {
-        try {
-            const response = await productsAPI.getById(id);
-            setProduct(response.data.data);
-
-            // Save to history if authenticated
-            if (isAuthenticated) {
-                await historyAPI.save({
-                    productId: response.data.data._id,
-                    productName: response.data.data.name
-                });
+                // Save to history if authenticated
+                if (isAuthenticated) {
+                    await historyAPI.save({
+                        productId: response.data.data._id,
+                        productName: response.data.data.name
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            console.error('Error loading product:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
+
+        loadProduct();
+    }, [id, isAuthenticated]);
 
     const handleExport = async (type, format = 'docx') => {
         if (!isAuthenticated) {

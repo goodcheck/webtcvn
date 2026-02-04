@@ -17,24 +17,24 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     useEffect(() => {
+        const loadUser = async () => {
+            try {
+                const response = await authAPI.getMe();
+                setUser(response.data.user);
+            } catch (error) {
+                console.error('Failed to load user:', error);
+                logout();
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (token) {
             loadUser();
         } else {
             setLoading(false);
         }
     }, [token]);
-
-    const loadUser = async () => {
-        try {
-            const response = await authAPI.getMe();
-            setUser(response.data.user);
-        } catch (error) {
-            console.error('Failed to load user:', error);
-            logout();
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const login = async (email, password) => {
         try {
