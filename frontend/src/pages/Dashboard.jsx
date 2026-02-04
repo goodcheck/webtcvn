@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { historyAPI } from '../services/api';
+import { historyAPI, authAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 

@@ -42,7 +42,7 @@ const ProductDetail = () => {
         });
     };
 
-    const handleExport = async (type, format = 'docx') => {
+    const handleExport = async (type, format = 'pdf') => {
         if (!isAuthenticated) {
             alert('Vui lòng đăng nhập để xuất file');
             return;
@@ -70,7 +70,13 @@ const ProductDetail = () => {
                     return;
             }
 
-            alert(response.data.message);
+            if (response.data.success && response.data.data.downloadUrl) {
+                // Construct full URL and open in new tab to trigger download
+                const downloadUrl = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}${response.data.data.downloadUrl}`;
+                window.open(downloadUrl, '_blank');
+            } else {
+                alert(response.data.message);
+            }
         } catch (error) {
             alert('Lỗi khi xuất file: ' + (error.response?.data?.message || error.message));
         }
