@@ -68,7 +68,7 @@ const Home = () => {
             </div>
 
             {/* Search Box */}
-            <div className="search-section">
+            <div className="search-box">
                 <h3>Tra cứu sản phẩm của bạn</h3>
 
                 <div className="search-input-wrapper" ref={searchRef}>
@@ -78,11 +78,12 @@ const Home = () => {
                         placeholder="Nhập tên sản phẩm (VD: Cà phê, Nước tinh khiết...)"
                         value={searchQuery}
                         onChange={(e) => handleSearchInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && searchQuery && (suggestions.length > 0 ? selectProduct(suggestions[0]) : null)}
                     />
 
                     {/* Autocomplete Suggestions */}
                     {showSuggestions && suggestions.length > 0 && (
-                        <div className="autocomplete-suggestions">
+                        <div className="autocomplete-suggestions active">
                             {suggestions.map((product) => (
                                 <div
                                     key={product._id}
@@ -99,6 +100,13 @@ const Home = () => {
                         </div>
                     )}
                 </div>
+
+                <button
+                    className="search-btn"
+                    onClick={() => searchQuery && suggestions.length > 0 && selectProduct(suggestions[0])}
+                >
+                    🔍 Tra cứu
+                </button>
 
                 <p className="quick-categories-label">📌 Danh mục phổ biến:</p>
                 <div className="quick-categories">
