@@ -10,65 +10,21 @@ dotenv.config();
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const exportRoutes = require('./routes/export');
-const historyRoutes = require('./routes/history');
-
-// Import middleware
-const errorHandler = require('./middleware/errorHandler');
-
-const app = express();
-
-// Middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/export', exportRoutes);
-app.use('/api/history', historyRoutes);
-
-// Health check
-app.get('/api/health', (req, res) => {
-  const dbStatus = mongoose.connection.readyState;
-  const dbStates = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting'
-  };
-
-  res.json({
-    status: dbStatus === 1 ? 'OK' : 'ERROR',
-    message: dbStatus === 1 ? 'TCVN API is running' : 'Database not connected',
-    dbState: dbStates[dbStatus] || 'unknown'
-  });
-});
-
-// Error handler (must be last)
-app.use(errorHandler);
-
-// MongoDB connection
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tcvn-system';
-
-// Connection options to handle DNS issues on some hosting providers
-const mongooseOptions = {
-  family: 4 // Use IPv4, skip IPv6
-};
-
-// Check if we need to disable SRV lookup (for cPanel hosting issues)
-if (MONGODB_URI.includes('mongodb+srv://') && process.env.NODE_ENV === 'production') {
-  // Try to connect normally first
-}
+const Product = require('./models/Product');
+const seedDatabase = require('./utils/seedDatabase');
 
 // Connect to MongoDB but don't block server startup
 mongoose.connect(MONGODB_URI, mongooseOptions)
-  .then(() => {
+  .then(async () => {
     console.log('✅ MongoDB connected successfully');
+
+    // Auto-seed if database doesn't have the new rich data
+    const hasRichData = await Product.findOne({ name: 'Cà phê bột - Rang xay nguyên chất' });
+    if (!hasRichData) {
+      console.log('⚠️ Rich VNTR data missing. Running auto-seed/re-seed...');
+      await seedDatabase(false);
+      console.log('✅ Seed/Re-seed completed');
+    }
   })
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err);
