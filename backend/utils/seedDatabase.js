@@ -9,28 +9,30 @@ dotenv.config();
 // Sample products data from the demo
 const sampleProducts = [
     {
-        name: 'Cà phê bột',
-        code: '09011210',
-        category: 'Chương 9 > 0901 > Cà phê, đã rang',
-        path: 'CÀ PHÊ, CHÈ, CHÈ PARAGOAY VÀ CÁC LOẠI GIA VỊ',
+        name: 'Cà phê bột - Rang xay nguyên chất',
+        code: '0901.21.20',
+        category: 'Chương 09 > 0901 > Cà phê đã rang, chưa khử caffeine > Đã xay',
+        path: 'VNTR > BIỂU THUẾ > CHƯƠNG 09 > 0901',
         sensoryIndicators: {
             color: 'Nâu đậm đặc trưng của cà phê rang',
-            smell: 'Mùi cà phê rang tự nhiên, không mùi lạ',
-            taste: 'Đắng dịu đặc trưng, không mốc, không khét',
-            texture: 'Bột mịn hoặc hạt đồng đều, không vón cục'
+            smell: 'Mùi cà phê rang tự nhiên, thơm nồng, không mùi lạ',
+            taste: 'Đắng dịu đặc trưng, hậu vị ngọt, không chất bảo quản',
+            texture: 'Bột mịn, tơi xốp, không vón cục'
         },
         physicalChemical: [
-            { indicator: 'Độ ẩm', value: '≤ 5%', method: 'TCVN 6722-1:2000' },
+            { indicator: 'Độ ẩm', value: '≤ 5.0%', method: 'TCVN 6722-1:2000' },
             { indicator: 'Hàm lượng Caffeine', value: '1.0 – 2.5%', method: 'AOAC 976.13' },
-            { indicator: 'Tro tổng số', value: '≤ 5%', method: 'TCVN 6722-2:2000' },
+            { indicator: 'Tro tổng số', value: '≤ 5.0%', method: 'TCVN 6722-2:2000' },
             { indicator: 'Tro không tan trong HCl', value: '≤ 0.5%', method: 'TCVN 6722-3:2000' },
-            { indicator: 'Chất hòa tan', value: '≥ 20%', method: 'TCVN 7538:2005' }
+            { indicator: 'Chất hòa tan', value: '≥ 25%', method: 'TCVN 7538:2005' },
+            { indicator: 'Tạp chất (Hạt đen, vỡ)', value: 'Không phát hiện', method: 'Kiểm tra cảm quan' }
         ],
         microbiological: [
             { indicator: 'Tổng số vi khuẩn hiếu khí', limit: '≤ 10⁵ CFU/g', method: 'TCVN 4884:2005' },
             { indicator: 'Coliforms', limit: '≤ 10² CFU/g', method: 'TCVN 6846:2008' },
             { indicator: 'E.coli', limit: 'Không phát hiện trong 1g', method: 'TCVN 6846:2008' },
-            { indicator: 'Salmonella', limit: 'Không phát hiện/25g', method: 'TCVN 4829:2005' }
+            { indicator: 'Salmonella', limit: 'Không phát hiện/25g', method: 'TCVN 4829:2005' },
+            { indicator: 'Nấm men, nấm mốc', limit: '≤ 10² CFU/g', method: 'TCVN 8275:2010' }
         ],
         heavyMetals: [
             { indicator: 'Chì (Pb)', limit: '≤ 0.2 mg/kg', method: 'AOAC 999.10' },
@@ -38,109 +40,77 @@ const sampleProducts = [
             { indicator: 'Asen (As)', limit: '≤ 0.2 mg/kg', method: 'AOAC 986.15' }
         ],
         mycotoxins: [
-            { indicator: 'Ochratoxin A', limit: '≤ 5 µg/kg', method: 'EN 14132:2003' },
-            { indicator: 'Aflatoxin B1', limit: '≤ 5 µg/kg', method: 'AOAC 2005.08' }
+            { indicator: 'Ochratoxin A', limit: '≤ 5 µg/kg', method: 'EN 14132:2003' }
         ],
         testingRequirements: [
-            { stt: 1, indicator: 'Độ ẩm', method: 'TCVN 6722-1:2000', cost: 200000, category: 'CHẤT LƯỢNG' },
-            { stt: 2, indicator: 'Caffeine', method: 'AOAC 976.13', cost: 500000, category: 'CHẤT LƯỢNG' },
-            { stt: 3, indicator: 'Tro tổng số', method: 'TCVN 6722-2:2000', cost: 200000, category: 'CHẤT LƯỢNG' },
+            { stt: 1, indicator: 'Chỉ tiêu Cảm quan (4 chỉ tiêu)', method: 'TCVN 5251:2007', cost: 400000, category: 'CHẤT LƯỢNG' },
+            { stt: 2, indicator: 'Độ ẩm', method: 'TCVN 6722-1:2000', cost: 200000, category: 'CHẤT LƯỢNG' },
+            { stt: 3, indicator: 'Hàm lượng Caffeine', method: 'AOAC 976.13', cost: 600000, category: 'CHẤT LƯỢNG' },
             { stt: 4, indicator: 'Tổng số vi khuẩn hiếu khí', method: 'TCVN 4884:2005', cost: 300000, category: 'VI SINH' },
-            { stt: 5, indicator: 'E.coli', method: 'TCVN 6846:2008', cost: 350000, category: 'VI SINH' },
-            { stt: 6, indicator: 'Salmonella', method: 'TCVN 4829:2005', cost: 800000, category: 'VI SINH' },
-            { stt: 7, indicator: 'Chì (Pb)', method: 'AOAC 999.10', cost: 600000, category: 'KIM LOẠI NẶNG' },
-            { stt: 8, indicator: 'Cadimi (Cd)', method: 'AOAC 999.10', cost: 600000, category: 'KIM LOẠI NẶNG' }
+            { stt: 5, indicator: 'E.coli & Salmonella', method: 'TCVN ISO', cost: 1100000, category: 'VI SINH' },
+            { stt: 6, indicator: 'Kim loại nặng (Pb, Cd, As)', method: 'ICP-MS', cost: 1500000, category: 'KIM LOẠI NẶNG' }
         ],
         packagingRequirements: {
-            type: 'Túi composite, hộp kim loại đảm bảo tiếp xúc thực phẩm',
-            standard: 'QCVN 12-1:2011/BYT',
-            features: 'Kín khí, chống ẩm, không thấm mùi'
+            type: 'Túi màng nhôm composite, van một chiều bảo quản hương vị',
+            standard: 'QCVN 12-1:2011/BYT (Bao bì nhựa tiếp xúc trực tiếp)',
+            features: 'Ngăn oxy, độ ẩm, tia UV, giữ hương thơm cà phê lâu dài'
         },
         labelingRequirements: [
-            { requirement: 'Tên sản phẩm', detail: 'CÀ PHÊ BỘT' },
-            { requirement: 'Thành phần', detail: '100% hạt cà phê Robusta rang xay' },
-            { requirement: 'Khối lượng tịnh', detail: '500g' },
-            { requirement: 'Ngày sản xuất / HSD', detail: 'DD/MM/YYYY - 24 tháng từ NSX' },
-            { requirement: 'Hướng dẫn bảo quản', detail: 'Nơi khô ráo, tránh ánh nắng trực tiếp' },
-            { requirement: 'Tên & địa chỉ cơ sở SX', detail: '[Tên công ty - Địa chỉ - ĐT]' }
+            { requirement: 'Tên hàng hóa', detail: 'CÀ PHÊ BỘT RANG XAY' },
+            { requirement: 'Thành phần', detail: 'Cà phê Robusta (80%), Arabica (20%)' },
+            { requirement: 'Trọng lượng', detail: 'Net Weight: 500g / 1.1 lbs' },
+            { requirement: 'Thông tin cảnh báo', detail: 'Không dùng sản phẩm quá hạn sử dụng' },
+            { requirement: 'Xuất xứ', detail: 'Made in Vietnam (Buôn Ma Thuột)' },
+            { requirement: 'NSX & HSD', detail: 'In trên bao bì (Sử dụng tốt nhất trong 12 tháng)' }
         ]
     },
     {
-        name: 'Nước tinh khiết',
-        code: '220190',
-        category: 'Chương 22 > 2201 > Nước đóng chai',
-        path: 'ĐỒ UỐNG, RƯỢU VÀ GIẤM',
+        name: 'Nước mắm truyền thống',
+        code: '2103.90.12',
+        category: 'Chương 21 > 2103 > Nước xốt và các chế phẩm làm nước xốt > Nước mắm',
+        path: 'VNTR > BIỂU THUẾ > CHƯƠNG 21 > 2103',
         sensoryIndicators: {
-            color: 'Trong suốt, không màu',
-            smell: 'Không mùi',
-            taste: 'Không vị lạ',
-            texture: 'Lỏng, trong suốt'
+            color: 'Nâu đỏ cánh gián, trong suốt, không lắng cặn',
+            smell: 'Mùi thơm đặc trưng của cá ngâm muối lâu ngày',
+            taste: 'Mặn đầu lưỡi, ngọt hậu thanh, vị đạm tự nhiên',
+            texture: 'Lỏng, sánh đặc trưng của nước mắm cốt'
         },
         physicalChemical: [
-            { indicator: 'pH', value: '6.5 - 8.5', method: 'TCVN 6492:1999' },
-            { indicator: 'Độ dẫn điện', value: '≤ 10 µS/cm', method: 'TCVN 6194:1996' }
+            { indicator: 'Hàm lượng Nitơ tổng số (Độ đạm)', value: '≥ 40 g/l', method: 'TCVN 3705:1990' },
+            { indicator: 'Hàm lượng Nitơ axit amin', value: '≥ 50% nitơ tổng số', method: 'TCVN 3708:1990' },
+            { indicator: 'Hàm lượng Muối (NaCl)', value: '245 - 280 g/l', method: 'TCVN 3701:2009' }
         ],
         microbiological: [
-            { indicator: 'Tổng số vi khuẩn hiếu khí', limit: '≤ 100 CFU/ml', method: 'TCVN 6189:2010' },
-            { indicator: 'Coliforms', limit: 'Không phát hiện/100ml', method: 'TCVN 6187:2010' }
+            { indicator: 'Clostridium perfringens', limit: '0 CFU/g', method: 'TCVN 4991:2005' },
+            { indicator: 'S. aureus', limit: '0 CFU/g', method: 'TCVN 4830:2005' }
         ],
         testingRequirements: [
-            { stt: 1, indicator: 'pH', method: 'TCVN 6492:1999', cost: 150000, category: 'CHẤT LƯỢNG' },
-            { stt: 2, indicator: 'Tổng số vi khuẩn', method: 'TCVN 6189:2010', cost: 250000, category: 'VI SINH' }
+            { stt: 1, indicator: 'Độ đạm tổng số', method: 'TCVN 3705', cost: 350000, category: 'CHẤT LƯỢNG' },
+            { stt: 2, indicator: 'Nitơ axit amin', method: 'TCVN 3708', cost: 400000, category: 'CHẤT LƯỢNG' },
+            { stt: 3, indicator: 'Vi sinh ATTP', method: 'TCVN ISO', cost: 1200000, category: 'VI SINH' }
         ],
         packagingRequirements: {
-            type: 'Chai PET, bình PC đảm bảo tiếp xúc thực phẩm',
-            standard: 'QCVN 12-1:2011/BYT',
-            features: 'Kín, không thấm khí'
+            type: 'Chai thủy tinh trung tính hoặc nhựa PET thực phẩm',
+            standard: 'QCVN 12-1:2011/BYT & QCVN 12-4:2015/BYT',
+            features: 'Chịu mặn, ngăn ánh sáng làm biến màu nước mắm'
         }
     },
     {
-        name: 'Bánh quy',
-        code: '1905',
-        category: 'Chương 19 > Bánh, bánh quy',
-        path: 'CHẾ PHẨM TỪ NGŨ CỐC, BỘT, TINH BỘT',
+        name: 'Bánh quy ngọt không chứa ca cao',
+        code: '1905.31.20',
+        category: 'Chương 19 > 1905 > Bánh quy ngọt > Loại khác',
+        path: 'VNTR > BIỂU THUẾ > CHƯƠNG 19 > 1905',
         sensoryIndicators: {
-            color: 'Vàng đồng đều',
-            smell: 'Thơm đặc trưng',
-            taste: 'Ngọt, giòn',
-            texture: 'Giòn, không ẩm'
-        }
-    },
-    {
-        name: 'Gạo trắng',
-        code: '1006',
-        category: 'Chương 10 > Gạo',
-        path: 'NGŨ CỐC',
-        sensoryIndicators: {
-            color: 'Trắng tự nhiên',
-            smell: 'Mùi thơm tự nhiên',
-            taste: 'Ngọt tự nhiên',
-            texture: 'Hạt đồng đều'
-        }
-    },
-    {
-        name: 'Nước mắm',
-        code: '2103',
-        category: 'Chương 21 > Nước sốt, gia vị',
-        path: 'CHẾ PHẨM THỰC PHẨM KHÁC',
-        sensoryIndicators: {
-            color: 'Nâu đỏ trong',
-            smell: 'Mùi đặc trưng',
-            taste: 'Mặn, umami',
-            texture: 'Lỏng, trong'
-        }
-    },
-    {
-        name: 'Sữa tươi tiệt trùng',
-        code: '0401',
-        category: 'Chương 4 > Sữa và kem',
-        path: 'SẢN PHẨM CỦA CÔNG NGHIỆP THỰC PHẨM',
-        sensoryIndicators: {
-            color: 'Trắng đồng đều',
-            smell: 'Mùi sữa tự nhiên',
-            taste: 'Ngọt nhẹ',
-            texture: 'Lỏng đồng nhất'
-        }
+            color: 'Vàng đều, không cháy sém',
+            smell: 'Thơm mùi bơ sữa và vanilla',
+            taste: 'Ngọt thanh, béo ngậy, không vị lạ',
+            texture: 'Giòn tan, không mềm ỉu'
+        },
+        testingRequirements: [
+            { stt: 1, indicator: 'Độ ẩm & Tro', method: 'TCVN', cost: 300000, category: 'CHẤT LƯỢNG' },
+            { stt: 2, indicator: 'Đường tổng số', method: 'TCVN', cost: 350000, category: 'CHẤT LƯỢNG' },
+            { stt: 3, indicator: 'Kim loại nặng', method: 'TCVN', cost: 1200000, category: 'AN TOÀN' }
+        ]
     }
 ];
 
