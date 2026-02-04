@@ -48,7 +48,6 @@ const ProductDetail = () => {
             return;
         }
 
-        setExportLoading(true);
         try {
             let response;
             switch (type) {
@@ -74,8 +73,6 @@ const ProductDetail = () => {
             alert(response.data.message);
         } catch (error) {
             alert('Lỗi khi xuất file: ' + (error.response?.data?.message || error.message));
-        } finally {
-            setExportLoading(false);
         }
     };
 
