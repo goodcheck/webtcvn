@@ -10,7 +10,6 @@ const ProductDetail = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
-    const [exportLoading, setExportLoading] = useState(false);
     const [modifiedData, setModifiedData] = useState({});
 
     useEffect(() => {
