@@ -160,4 +160,23 @@ router.post('/all', protect, async (req, res, next) => {
     }
 });
 
+const path = require('path');
+
+// @route   GET /api/export/download/:filename
+// @desc    Download generated file
+// @access  Public (protected by filename which includes timestamp)
+router.get('/download/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filepath = path.join(__dirname, '..', 'exports', filename);
+
+    res.download(filepath, filename, (err) => {
+        if (err) {
+            res.status(404).json({
+                success: false,
+                message: 'Không tìm thấy file hoặc file đã hết hạn'
+            });
+        }
+    });
+});
+
 module.exports = router;
