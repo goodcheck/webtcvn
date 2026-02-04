@@ -306,6 +306,156 @@ async function generateTestingForm(product, format, user, modifiedData) {
 }
 
 /**
+ * Generate Declaration Form
+ */
+async function generateDeclaration(product, format, user, modifiedData) {
+    await ensureExportsDir();
+    const p = applyModifiedData(product, modifiedData);
+    const timestamp = Date.now();
+
+    if (format === 'pdf') {
+        const filename = `CongBo_${p.name.replace(/\s+/g, '_')}_${timestamp}.pdf`;
+        const filepath = path.join(EXPORTS_DIR, filename);
+        const doc = new PDFDocument({ margin: 50 });
+        const stream = fsSync.createWriteStream(filepath);
+        doc.pipe(stream);
+
+        // National Header
+        doc.fontSize(12).text('CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM', { align: 'center' });
+        doc.fontSize(11).text('Độc lập - Tự do - Hạnh phúc', { align: 'center' });
+        doc.moveDown();
+        doc.text('-------------------------', { align: 'center' });
+        doc.moveDown(2);
+
+        // Title
+        doc.fontSize(16).text('BẢN TỰ CÔNG BỐ SẢN PHẨM', { align: 'center', bold: true });
+        doc.moveDown(2);
+
+        // Section I
+        doc.fontSize(12).text('I. Thông tin về tổ chức, cá nhân tự công bố sản phẩm', { underline: true });
+        doc.fontSize(11).text(`- Tên tổ chức, cá nhân: ${user.company || '[Tên công ty]'}`);
+        doc.text(`- Địa chỉ: ${user.address || '[Địa chỉ]'}`);
+        doc.text(`- Điện thoại: ${user.phone || '[Điện thoại]'}`);
+        doc.text(`- Mã số doanh nghiệp: ${user.taxCode || '[Mã số thuế]'}`);
+        doc.moveDown();
+
+        // Section II
+        doc.fontSize(12).text('II. Thông tin về sản phẩm', { underline: true });
+        doc.fontSize(11).text(`1. Tên sản phẩm: ${p.name}`);
+        doc.text(`2. Mã HS: ${p.code}`);
+        doc.text(`3. Thành phần: [Như đã liệt kê trong hồ sơ kỹ thuật]`);
+        doc.moveDown();
+
+        // Section III
+        doc.fontSize(12).text('III. Mẫu nhãn sản phẩm', { underline: true });
+        doc.fontSize(11).text('(Đính kèm mẫu nhãn dự kiến)');
+        doc.moveDown(3);
+
+        // Commitment
+        doc.fontSize(11).text('Chúng tôi xin cam đoan thực hiện đúng quy định của pháp luật!', { align: 'right' });
+        doc.moveDown(2);
+        doc.text(`${user.name}`, { align: 'right' });
+
+        doc.end();
+
+        return new Promise((resolve, reject) => {
+            stream.on('finish', () => resolve({ filename, filepath }));
+            stream.on('error', reject);
+        });
+    } else {
+        // Word (DOCX) logic
+        const doc = new Document({
+            sections: [{
+                properties: {},
+                children: [
+                    new Paragraph({
+                        text: 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM',
+                        alignment: AlignmentType.CENTER,
+                        heading: 'Heading1'
+                    }),
+                    new Paragraph({
+                        text: 'Độc lập - Tự do - Hạnh phúc',
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 400 }
+                    }),
+                    new Paragraph({
+                        text: 'BẢN TỰ CÔNG BỐ SẢN PHẨM',
+                        heading: 'Heading1',
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 400 }
+                    }),
+                    new Paragraph({
+                        text: 'I. Thông tin về tổ chức, cá nhân tự công bố sản phẩm',
+                        heading: 'Heading3',
+                        spacing: { before: 400, after: 200 }
+                    }),
+                    new Paragraph({
+                        text: `Tên tổ chức, cá nhân: ${user.company || '[Tên công ty]'}`,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: `Địa chỉ: ${user.address || '[Địa chỉ]'}`,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: `Điện thoại: ${user.phone || '[Điện thoại]'}`,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: `Mã số doanh nghiệp: ${user.taxCode || '[Mã số thuế]'}`,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: 'II. Thông tin về sản phẩm',
+                        heading: 'Heading3',
+                        spacing: { before: 400, after: 200 }
+                    }),
+                    new Paragraph({
+                        text: `1. Tên sản phẩm: ${p.name}`,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: `2. Mã HS: ${p.code}`,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: `3. Thành phần: [Như đã liệt kê trong hồ sơ kỹ thuật]`,
+                        spacing: { after: 100 }
+                    }),
+                    new Paragraph({
+                        text: 'III. Mẫu nhãn sản phẩm',
+                        heading: 'Heading3',
+                        spacing: { before: 400, after: 200 }
+                    }),
+                    new Paragraph({
+                        text: '(Đính kèm mẫu nhãn dự kiến)',
+                        spacing: { after: 400 }
+                    }),
+                    new Paragraph({
+                        text: 'Chúng tôi xin cam đoan thực hiện đúng quy định của pháp luật!',
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 600 }
+                    }),
+                    new Paragraph({
+                        text: `${user.name}`,
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 800 }
+                    })
+                ]
+            }]
+        });
+
+        const buffer = await Packer.toBuffer(doc);
+        const filename = `CongBo_${p.name.replace(/\s+/g, '_')}_${timestamp}.docx`;
+        const filepath = path.join(EXPORTS_DIR, filename);
+
+        await fs.writeFile(filepath, buffer);
+
+        return { filename, filepath };
+    }
+}
+
+/**
  * Generate Label Template
  */
 async function generateLabel(product, format, user, modifiedData) {
