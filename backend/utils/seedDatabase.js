@@ -123,16 +123,18 @@ const sampleAdmin = {
     role: 'admin'
 };
 
-const seedDatabase = async () => {
+const seedDatabase = async (exitAfter = true) => {
     try {
         // Add same connection options as server.js
         const mongooseOptions = {
             family: 4
         };
 
-        // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tcvn-system', mongooseOptions);
-        console.log('✅ MongoDB connected');
+        // Connect to MongoDB only if not already connected
+        if (mongoose.connection.readyState !== 1) {
+            await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tcvn-system', mongooseOptions);
+            console.log('✅ MongoDB connected via seeder');
+        }
 
         // Clear existing data
         await Product.deleteMany({});
@@ -152,10 +154,10 @@ const seedDatabase = async () => {
         console.log('   Email: admin@tcvn.vn');
         console.log('   Password: admin123');
 
-        process.exit(0);
+        if (exitAfter) process.exit(0);
     } catch (error) {
         console.error('❌ Error seeding database:', error);
-        process.exit(1);
+        if (exitAfter) process.exit(1);
     }
 };
 
