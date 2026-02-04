@@ -17,7 +17,7 @@ const Header = () => {
             <div className="header-container">
                 <Link to="/" className="logo">
                     <span className="logo-icon">🔍</span>
-                    <span className="logo-text">TCVN/QCVN</span>
+                    <span className="logo-text">TCVN/QCVN <small style={{ fontSize: '0.6em', opacity: 0.6 }}>v1.1</small></span>
                 </Link>
 
                 <nav className="nav">
