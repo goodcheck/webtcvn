@@ -72,7 +72,9 @@ const ProductDetail = () => {
 
             if (response.data.success && response.data.data.downloadUrl) {
                 // Construct full URL and open in new tab to trigger download
-                const downloadUrl = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}${response.data.data.downloadUrl}`;
+                const apiBase = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+                const siteBase = apiBase.replace(/\/api$/, '');
+                const downloadUrl = `${siteBase}${response.data.data.downloadUrl}`;
                 window.open(downloadUrl, '_blank');
             } else {
                 alert(response.data.message);
