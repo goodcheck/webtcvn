@@ -33,7 +33,19 @@ app.use('/api/history', historyRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'TCVN API is running' });
+  const dbStatus = mongoose.connection.readyState;
+  const dbStates = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+
+  res.json({
+    status: dbStatus === 1 ? 'OK' : 'ERROR',
+    message: dbStatus === 1 ? 'TCVN API is running' : 'Database not connected',
+    dbState: dbStates[dbStatus] || 'unknown'
+  });
 });
 
 // Error handler (must be last)
