@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
-    const { user, login } = useAuth();
+    const { user } = useAuth();
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [profileData, setProfileData] = useState({
@@ -39,7 +39,7 @@ const Dashboard = () => {
         e.preventDefault();
         setUpdating(true);
         try {
-            const response = await authAPI.updateProfile(profileData);
+            await authAPI.updateProfile(profileData);
             // Re-login locally to update context with new user data
             // (Assumes context 'login' can handle updating state)
             // If login just sets token, we might need a specifically 'updateUser' function
